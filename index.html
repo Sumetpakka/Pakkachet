@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>กำลังใจให้คุณหมอที่สดใสคนนึง 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+  <style>
+    .floating-img {
+    position: absolute;
+    width: 80px;
+    pointer-events: none;
+    animation: floatUp 4s ease-in forwards;
+    z-index: 5;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-200px);
+      opacity: 0;
+    }
+  }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+    }
+    canvas {
+      display: block;
+    }
+
+    .message {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ffb6c1;
+      font-size: 2.2rem;
+      font-family: 'Itim', cursive;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+      text-shadow: 0 0 10px #fff0f5, 0 0 20px deeppink;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(-50%, -50%) translateY(0px);
+      }
+      50% {
+        transform: translate(-50%, -50%) translateY(-10px);
+      }
+    }
+
+    .start-btn {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      font-size: 1.2rem;
+      border: none;
+      background-color: deeppink;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .typewriter-container {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%, -50%);
+  width: 90%;
+  max-width: 800px;
+  font-family: 'Itim', cursive;
+  font-size: 1.3rem;
+  color: #ffc0cb;
+  z-index: 4;
+  white-space: pre-wrap;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .typewriter-container {
+    font-size: 1rem;
+    padding: 15px;
+    border-left: 3px solid deeppink;
+  }
+
+  .message {
+    font-size: 1.5rem;
+  }
+
+  .start-btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="message">Pakkachet have message to Olivia 🧸</div>
+  <img id="cartoon-img" src="forO.gif" alt="cute cartoon"
+  style="display: none; position: absolute; top: 40%; left: 50%;
+         transform: translate(-50%, -50%); width: 180px; z-index: 2;" />
+  <button class="start-btn" onclick="startShow()">เริ่มชมพลุ </button>
+  <div class="typewriter-container">
+    <p id="typewriter-text"></p>
+  </div>
+  <canvas id="canvas"></canvas>
+  <audio id="bgm" src="bgm.mp3" loop></audio>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+
+    const colors = ["#ff6699", "#ff3366", "#ff99cc", "#ff66cc", "#ff3399", "#ffffff", "#ffccff"];
+    const fireworks = [];
+
+    function createFirework(x, y) {
+      for (let i = 0; i < 100; i++) {
+        const angle = Math.random() * 2 * Math.PI;
+        const speed = Math.random() * 4 + 2;
+        fireworks.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          size: Math.random() * 2 + 1,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    }
+
+    function drawHeart(x, y, size, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(size, size);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(0, -3, -5, -3, -5, 0);
+      ctx.bezierCurveTo(-5, 3, 0, 5, 0, 6);
+      ctx.bezierCurveTo(0, 5, 5, 3, 5, 0);
+      ctx.bezierCurveTo(5, -3, 0, -3, 0, 0);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function updateFireworks() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, W, H);
+
+      for (let i = 0; i < fireworks.length; i++) {
+        const p = fireworks[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05;
+        p.alpha -= 0.01;
+        if (p.alpha <= 0) {
+          fireworks.splice(i, 1);
+          i--;
+        } else {
+          ctx.globalAlpha = p.alpha;
+          drawHeart(p.x, p.y, p.size * 0.3, p.color);
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      requestAnimationFrame(updateFireworks);
+    }
+
+    function startShow() {
+      document.querySelector(".start-btn").style.display = "none";
+      document.querySelector(".message").style.display = "none";
+      document.getElementById("bgm").play();
+      document.getElementById("cartoon-img").style.display = "block";
+
+
+      setInterval(() => {
+        const x = Math.random() * W;
+        const y = Math.random() * H / 2;
+        createFirework(x, y);
+      }, 1000);
+
+      updateFireworks();
+      typeWriter(); // เริ่มพิมพ์ข้อความ
+    }
+
+    // ========== Typewriter Effect ==========
+    const text = `ถึงหมอโอ หมอที่เก่งที่สุดที่เฉดเคยเจอ เป็นยังไงบ้างครับเหนื่อยมั้ย
+เห็นโอเคยบอกว่ามีลงงานแข่งด้วย สู้สู้นะครับระดับโอเก่งอยู่แล้ว
+แต่ต่อให้แพ้เฉดก็ยังเชียร์โออยู่ดี เพราะงั้นทำให้เต็มที่นะครับ
+
+ช่วงนี้เฉดค่อนข้างหัวหมุนเลย บางมดยากมากๆ
+แต่เฉดก็ได้สกิลหลายอย่างมาด้วยครับ
+อย่างที่เขียนจดหมายให้โอก็ได้จากที่นี่เหมือนกัน ฮ่าๆๆ
+
+เอาเป็นว่าเฉดจะคอยอยู่ซัพพอร์ตโออยู่ตรงนี้นะ
+สุดท้ายก็ยิ้มเอาไว้เยอะๆนะครับ
+เฉดมั่นใจเลยว่าโอยิ้มน่ารักมากๆ :)`;
+
+    let index = 0;
+    const speed = 80;
+
+    function typeWriter() {
+      if (index < text.length) {
+        document.getElementById("typewriter-text").innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, speed);
+      }
+    }
+
+    window.addEventListener("resize", () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+    });
+    
+  </script>
+</body>
+</html>
