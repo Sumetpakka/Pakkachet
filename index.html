@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -5,13 +6,15 @@
   <title>Happy birthday Mimee</title>
   <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
   <style>
-    .floating-img {
-    position: absolute;
-    width: 80px;
-    pointer-events: none;
-    animation: floatUp 4s ease-in forwards;
-    z-index: 5;
-  }
+   .floating-img {
+position: fixed;
+bottom: -80px;
+width: 80px;
+pointer-events: none;
+z-index: 4;
+animation: floatUp linear forwards;
+}
+
 
   @keyframes floatUp {
     0% {
@@ -104,6 +107,19 @@
     padding: 10px 20px;
   }
 }
+
+canvas {
+position: fixed;
+top: 0;
+left: 0;
+z-index: 0;
+}
+
+.start-btn {
+position: absolute;
+z-index: 10;
+}
+
   </style>
 </head>
 <body>
@@ -162,6 +178,31 @@
       ctx.restore();
     }
 
+   function createCake() {
+let img = document.createElement("img");
+img.className = "floating-img";
+
+// 🔥 ใส่รูปของคุณตรงนี้
+const images = ["j1.JPG","j2.JPG","j3.JPG","j4.JPG","j5.JPG"];
+img.src = images[Math.floor(Math.random()*images.length)];
+
+// สุ่มตำแหน่ง
+img.style.left = Math.random() * 100 + "vw";
+
+// สุ่มขนาด
+img.style.width = (60 + Math.random()*60) + "px";
+
+// สุ่มความเร็ว
+img.style.animationDuration = (3 + Math.random()*3) + "s";
+
+document.body.appendChild(img);
+
+setTimeout(() => {
+img.remove();
+}, 6000);
+}
+
+
     function updateFireworks() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
       ctx.fillRect(0, 0, W, H);
@@ -186,6 +227,7 @@
     }
 
     function startShow() {
+
       document.querySelector(".start-btn").style.display = "none";
       document.querySelector(".message").style.display = "none";
       document.getElementById("bgm").play();
@@ -200,6 +242,14 @@
 
       updateFireworks();
       typeWriter(); // เริ่มพิมพ์ข้อความ
+      
+      function loopSpawn(){
+createCake();
+setTimeout(loopSpawn, 500 + Math.random()*1000);
+}
+
+loopSpawn();
+
     }
 
     // ========== Typewriter Effect ==========
@@ -221,12 +271,7 @@
       }
     }
 
-    window.addEventListener("resize", () => {
-      W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width = W;
-      canvas.height = H;
-    });
+
     
   </script>
 </body>
